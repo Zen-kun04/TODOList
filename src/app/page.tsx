@@ -1,95 +1,71 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+
+import TODOBlock from "./components/TODOBlock";
+import TODOInput from "./components/TODOInput";
+import TODOItem from "./components/TODOItem";
+import styles from '@/app/styles/main.module.scss';
+import TODOReset from "./components/TODOReset";
+import TODOAdd from "./components/TODOAdd";
+import { useState, useRef } from "react";
 
 export default function Home() {
+  let names = [
+  "Faire les courses",
+  "Répondre aux e-mails",
+  "Terminer le rapport",
+  "Prendre rendez-vous",
+  "Préparer le dîner",
+  "Regarder un film"
+];
+  const [items, setItems] = useState(names);
+  const inputRef = useRef("");
+  
+
+  const handleTaskDelete = (taskindex) => {
+    const filtered = items.filter((_, index) => {
+      return index !== taskindex;
+    });
+    names = filtered;    
+    setItems(names);
+  }
+
+  const handlerTaskReset = () => {
+    setItems(names);
+  }
+
+  const handleTaskAdd = () => {
+    const val = inputRef.current.value;
+    
+    if(val !== "") {
+      const newtasks = [...items];
+      newtasks.push(val);
+      setItems(newtasks);
+      inputRef.current.value = "";
+    }
+    
+    
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+      <TODOBlock>
+        <ul className={styles.todo_list}>
+
+        
+      {
+        items?.map((name, index) => {
+          return (
+            <TODOItem name={name} index={index} key={"task_" + name + '_' + index} handler={() => handleTaskDelete(index)}/>
+          )
+        })
+      }
+      </ul>
+      <div className={styles.todo_inputs}>
+        <TODOReset handler={handlerTaskReset}/>
+        <TODOInput reference={inputRef}/>
+        <TODOAdd handler={handleTaskAdd}/>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      
+      </TODOBlock>
+      
+  );
 }
