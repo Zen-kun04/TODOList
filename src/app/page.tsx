@@ -36,7 +36,7 @@ export default function Home() {
   const handleTaskAdd = () => {
     const val = inputRef.current.value;
     
-    if(val !== "") {
+    if(val.trim() !== "") {
       const newtasks = [...items];
       newtasks.push(val);
       setItems(newtasks);
